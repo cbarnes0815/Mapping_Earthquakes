@@ -17,28 +17,40 @@ attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap
 
 // Create a base layer that holds both maps.
 let baseMaps = {
-  Street: streets,
-  Dark: dark
+  "Light": light,
+  "Dark": dark
 };
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
   center: [44, -80.0],
   zoom: 2,
-  layers: [streets]
-})
+  layers: [light]
+});
 
 // Pass our map layers into our layers control and add the layers control to the map.
 L.control.layers(baseMaps).addTo(map);
 
 // Accessing the Toronto airline routes GeoJSON URL
-let torontoData = "https://raw.githubusercontent.com/<GitHub_name>/Mapping_Earthquakes/main/torontoRoutes.json";
+let torontoData = "https://raw.githubusercontent.com/cbarnes0815/Mapping_Earthquakes/main/torontoRoutes.json";
+
+//Create Style for the lines
+let myStyle = {
+  color: "#ffffa1",
+  weight: 2
+}
 
 // Grabbing our GeoJSON data.
 d3.json(torontoData).then(function(data) {
   console.log(data);
+
 // Creating a GeoJSON layer with the retrieved data.
-L.geoJSON(data).addTo(map);
+L.geoJSON(data,{
+  style: myStyle,
+  onEachFeature: function(feature, layer){
+    layer.bindPopup("<h2>Airline: " + feature.properties.airline + "<hr>Destination: " + feature.properties.dst + "</h2>");
+  }
+  }).addTo(map);
 });
 
 
